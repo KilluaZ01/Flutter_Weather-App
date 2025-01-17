@@ -35,44 +35,33 @@ class MainApp extends StatelessWidget {
       },
       builder: (context, isDarkTheme) {
         return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: isDarkTheme ? ThemeMode.dark : ThemeMode.light,
-            home: FutureBuilder(
-                future: _determinePosition(),
-                builder: (context, snap) {
-                  if (snap.hasData) {
-                    return FutureBuilder(
-                      future: _checkLoginStatus(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          if (snapshot.hasData && snapshot.data == true) {
-                            return BlocProvider<WeatherBlocBloc>(
-                              create: (context) => WeatherBlocBloc()
-                                ..add(FetchWeather(snap.data as Position)),
-                              child: const HomeScreen(),
-                            );
-                          } else {
-                            return const LoginScreen();
-                          }
-                        } else {
-                          return const Scaffold(
-                            body: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  } else {
-                    return const Scaffold(
-                      body: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                }));
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+          home: FutureBuilder(
+            future: _determinePosition(),
+            builder: (context, snap) {
+              if (snap.connectionState == ConnectionState.done) {
+                if (snap.hasData) {
+                  return const LoginScreen(); // Always navigate to LoginScreen
+                } else {
+                  return const Scaffold(
+                    body: Center(
+                      child: Text('Unable to determine location.'),
+                    ),
+                  );
+                }
+              } else {
+                return const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+            },
+          ),
+        );
       },
     );
   }
@@ -101,11 +90,5 @@ class MainApp extends StatelessWidget {
     }
 
     return await Geolocator.getCurrentPosition();
-  }
-
-  // Method to check login status
-  Future<bool> _checkLoginStatus() async {
-    var box = await Hive.openBox<User>('userBox');
-    return box.isNotEmpty; // If the box is not empty, user is logged in
   }
 }

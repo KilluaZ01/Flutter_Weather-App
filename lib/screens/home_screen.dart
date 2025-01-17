@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(
-          size.width * 0.1, // 10% of the width
+          size.width * 0.1,
           1.2 * kToolbarHeight,
           size.width * 0.1,
           size.height * 0.02,
@@ -72,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
           height: size.height,
           child: Stack(
             children: [
-              // Background Circles
               Align(
                 alignment: const AlignmentDirectional(3, -0.3),
                 child: Container(
